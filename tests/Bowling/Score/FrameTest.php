@@ -124,9 +124,9 @@ class FrameTest extends \PHPUnit_Framework_TestCase
     {
         $frame = $this->getFrameSubject();
         $frame->addThrowResult(Frame::PINS_ON_LANE);
-        $this->assertNull($frame->getScore());
+        $this->assertNull($frame->getScore(), 'Unexpected value after first throw.');
         $frame->addThrowResult(Frame::PINS_ON_LANE);
-        $this->assertNull($frame->getScore());
+        $this->assertNull($frame->getScore(), 'Unexpected value after second throw.');
     }
 
     /**
@@ -241,6 +241,7 @@ class FrameTest extends \PHPUnit_Framework_TestCase
         $frame = $this->getFrameSubject();
         $frame->addThrowResult($throw);
     }
+
 
     /**
      * @return Frame

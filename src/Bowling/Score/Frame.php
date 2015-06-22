@@ -56,15 +56,10 @@ class Frame
         if ($this->getPinsLeft()>0) {
             return $this->getKnockedPins();
         }
-        if ($this->isStrike() && (count($this->laterThrows)<2)) {
-            return null;
+        if ($this->isStrike() || $this->isSpare()) {
+            return $this->getSpecialScore();
         }
-        if ($this->isStrike() && (count($this->laterThrows)===2)) {
-            return (array_sum($this->throws) + array_sum($this->laterThrows));
-        }
-        if ($this->isSpare() && (count($this->laterThrows)===1)) {
-            return (array_sum($this->throws) + $this->laterThrows[0]);
-        }
+        return null;
     }
 
     /**
@@ -118,7 +113,7 @@ class Frame
      */
     private function isSpare()
     {
-        return ($this->getPinsLeft() === 0);
+        return (($this->getPinsLeft() === 0) && !$this->isStrike());
     }
 
     /**
@@ -137,5 +132,19 @@ class Frame
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return null|number
+     */
+    private function getSpecialScore()
+    {
+        if ($this->isStrike() && (count($this->laterThrows)===2)) {
+            return (array_sum($this->throws) + array_sum($this->laterThrows));
+        }
+        elseif ($this->isSpare() && (count($this->laterThrows)===1)) {
+            return (array_sum($this->throws) + array_sum($this->laterThrows));
+        }
+        return null;
     }
 }

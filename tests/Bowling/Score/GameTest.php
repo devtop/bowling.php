@@ -27,7 +27,15 @@ class GameTest extends \PHPUnit_Framework_TestCase
     public function testActiveFrameStartsByOne()
     {
         $game = $this->getGameSubject();
-        $this->assertSame(1, $game->getActiveFrame());
+        $this->assertSame(1, $game->getActiveFrameNumber());
+    }
+
+    public function testTwoThrowsIncreasesActiveFrame()
+    {
+        $game = $this->getGameSubject();
+        $game->addThrow(1);
+        $game->addThrow(1);
+        $this->assertGreaterThan(1, $game->getActiveFrameNumber());
     }
 
     /**
@@ -35,7 +43,7 @@ class GameTest extends \PHPUnit_Framework_TestCase
      */
     private function getGameSubject()
     {
-        return new Game();
+        return GameFactory::create();
     }
 
 }

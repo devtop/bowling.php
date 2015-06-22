@@ -62,7 +62,13 @@ class Frame
      */
     public function isFinished()
     {
-        return (count($this->throws)===self::MAX_THROWS_PER_FRAME);
+        if (count($this->throws)===self::MAX_THROWS_PER_FRAME) {
+            return true;
+        }
+        elseif ($this->getPinsLeft()===0) {
+            return true;
+        }
+        return false;
     }
 
     /**

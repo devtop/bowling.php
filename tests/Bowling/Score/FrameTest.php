@@ -7,7 +7,7 @@ namespace Bowling\Score;
 
 class FrameTest extends \PHPUnit_Framework_TestCase
 {
-    public function testAddBallIsCallable()
+    public function testAddThrowResultIsCallable()
     {
         $frame = $this->getFrameSubject();
         $frame->addThrowResult(5);
@@ -25,6 +25,10 @@ class FrameTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(Frame::PINS_ON_LANE, $frame->getPinsLeft());
     }
 
+    /**
+     * @depends testPinsLeftArePinsOnLaneWithoutAnyThrow
+     * @depends testAddThrowResultIsCallable
+     */
     public function testPinsLeftAreReducedByFirstThrow()
     {
         $knockedPins = 5;
@@ -39,6 +43,9 @@ class FrameTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(1, $frame->getActiveThrow());
     }
 
+    /**
+     * @depends testFirstThrowIsActiveWhenNothingDoneYet
+     */
     public function testActiveThrowIncreasesAfterThrow()
     {
         $frame = $this->getFrameSubject();
@@ -52,12 +59,25 @@ class FrameTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($frame->isFinished());
     }
 
+    /**
+     * @depends testFrameIsNotFinishedAtBegin
+     */
     public function testFrameIsFinishedAfterMaxThrowsPerFrame()
     {
         $frame = $this->getFrameSubject();
         for ($i=Frame::MAX_THROWS_PER_FRAME; $i>=0; $i--) {
             $frame->addThrowResult(0);
         }
+        $this->assertTrue($frame->isFinished());
+    }
+
+    /**
+     * @depends testFrameIsFinishedAfterMaxThrowsPerFrame
+     */
+    public function testFrameIsFinishedAfterStrike()
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
         $this->assertTrue($frame->isFinished());
     }
 

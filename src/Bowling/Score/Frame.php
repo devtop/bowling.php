@@ -7,9 +7,15 @@ namespace Bowling\Score;
 
 class Frame
 {
-    private $threwScores = [];
+    /**
+     * @var Int[] $throws collects the knocked pins threw in this frame
+     */
+    private $throws = [];
 
-    private $throwCounter = 1;
+    /**
+     * @var Int[] $throws collects the knocked pins threw in llater frames
+     */
+    private $laterThrows = [];
 
     const PINS_ON_LANE = 10;
     const MAX_THROWS_PER_FRAME = 2;
@@ -19,7 +25,12 @@ class Frame
      */
     public function addThrowResult($knockedPins)
     {
-        $this->threwScores[$this->throwCounter++] = $knockedPins;
+        if (!$this->isFinished()) {
+            $this->throws[] = $knockedPins;
+        }
+        else {
+            $this->laterThrows[] = $knockedPins;
+        }
     }
 
     /**
@@ -35,13 +46,7 @@ class Frame
      */
     public function getPinsLeft()
     {
-        $pinsLeft = self::PINS_ON_LANE;
-
-        for ($i=$this->getHighestThrowToCount(); $i>0; $i--) {
-            $pinsLeft -= $this->threwScores[$i];
-        }
-
-        return $pinsLeft;
+        return (self::PINS_ON_LANE - $this->getKnockedPins());
     }
 
     /**
@@ -49,15 +54,7 @@ class Frame
      */
     public function getActiveThrow()
     {
-        return $this->throwCounter;
-    }
-
-    /**
-     * @return int
-     */
-    private function getHighestThrowToCount()
-    {
-        return $this->isFinished() ? self::MAX_THROWS_PER_FRAME : $this->throwCounter-1;
+        return (count($this->throws)+1);
     }
 
     /**
@@ -65,6 +62,14 @@ class Frame
      */
     public function isFinished()
     {
-        return ($this->throwCounter > self::MAX_THROWS_PER_FRAME);
+        return (count($this->throws)===self::MAX_THROWS_PER_FRAME);
+    }
+
+    /**
+     * @return number
+     */
+    private function getKnockedPins()
+    {
+        return array_sum($this->throws);
     }
 }

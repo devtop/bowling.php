@@ -65,10 +65,36 @@ class FrameTest extends \PHPUnit_Framework_TestCase
     public function testFrameIsFinishedAfterMaxThrowsPerFrame()
     {
         $frame = $this->getFrameSubject();
-        for ($i=Frame::MAX_THROWS_PER_FRAME; $i>=0; $i--) {
+        for ($i=Frame::MAX_THROWS_PER_FRAME; $i>0; $i--) {
             $frame->addThrowResult(0);
         }
         $this->assertTrue($frame->isFinished());
+    }
+
+    /**
+     * @depends testFrameIsFinishedAfterMaxThrowsPerFrame
+     * @depends testUndefinedScoreReturnsNull
+     */
+    public function testScoreIsNotNullWhenFinishedWithoutStrikeOrSpare()
+    {
+        $frame = $this->getFrameSubject();
+        for ($i=Frame::MAX_THROWS_PER_FRAME; $i>0; $i--) {
+            $frame->addThrowResult(0);
+        }
+        $this->assertNotNull($frame->isFinished());
+    }
+
+    /**
+     * @depends testScoreIsNotNullWhenFinishedWithoutStrikeOrSpare
+     */
+    public function testScoreCountsUsualThrows()
+    {
+        $frame = $this->getFrameSubject();
+        $throws = [2, 3];
+        foreach($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+        $this->assertSame(array_sum($throws), $frame->getScore());
     }
 
     /**
@@ -79,6 +105,141 @@ class FrameTest extends \PHPUnit_Framework_TestCase
         $frame = $this->getFrameSubject();
         $frame->addThrowResult(Frame::PINS_ON_LANE);
         $this->assertTrue($frame->isFinished());
+    }
+
+    /**
+     * @depends testFrameIsNotFinishedAtBegin
+     */
+    public function testStrikeFinishesTheFrame()
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
+        $this->assertTrue($frame->isFinished());
+    }
+
+    /**
+     * @depends testUndefinedScoreReturnsNull
+     */
+    public function testScoreIsNullAfterStrike()
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
+        $this->assertNull($frame->getScore());
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
+        $this->assertNull($frame->getScore());
+    }
+
+    /**
+     * @depends testStrikeFinishesTheFrame
+     * @depends testScoreIsNullAfterStrike
+     */
+    public function testStrikeAddsNextTwoThrowsToScore()
+    {
+        $frame = $this->getFrameSubject();
+        $throws = [Frame::PINS_ON_LANE, 3, 5];
+        foreach($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+        $this->assertSame(array_sum($throws), $frame->getScore());
+    }
+
+    /**
+     * @dpeends testStrikeFinishesTheFrame
+     */
+    public function testSpareFinishesTheFrame()
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult(0);
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
+        $this->assertTrue($frame->isFinished());
+    }
+
+    /**
+     * @depends testUndefinedScoreReturnsNull
+     */
+    public function testScoreIsNullAfterSpare()
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult(0);
+        $frame->addThrowResult(Frame::PINS_ON_LANE);
+        $this->assertNull($frame->getScore());
+    }
+
+    /**
+     * @depends testSpareFinishesTheFrame
+     * @depends testScoreIsNullAfterSpare
+     */
+    public function testSpareAddsNextThrowToScore()
+    {
+        $frame = $this->getFrameSubject();
+        $throws = [0, Frame::PINS_ON_LANE, 3];
+        foreach($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+        $this->assertSame(array_sum($throws), $frame->getScore());
+    }
+
+    /**
+     * @expectedException \Bowling\Score\UnprocessableThrowException
+     * @depends testAddThrowResultIsCallable
+     */
+    public function testTooManyThrows()
+    {
+        $frame = $this->getFrameSubject();
+        $throws = array_fill(0,Frame::MAX_THROWS_PER_FRAME+1, 0);
+        foreach($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function dpTooHighThrows()
+    {
+        return [
+            [[Frame::PINS_ON_LANE+1, 0]],
+            [[Frame::PINS_ON_LANE-1, 2]],
+        ];
+    }
+
+    /**
+     * @param Int[] $throws
+     * @dataProvider dpTooHighThrows
+     * @expectedException \Bowling\Score\UnprocessableThrowException
+     * @depends testAddThrowResultIsCallable
+     */
+    public function testTooHighThrow($throws)
+    {
+        $frame = $this->getFrameSubject();
+        foreach($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function dpWeirdNonIntThrows()
+    {
+        return [
+            ['A'],
+            [null],
+            [true],
+        ];
+    }
+
+    /**
+     * @dataProvider dpWeirdNonIntThrows
+     * @param Int[] $throws
+     * @param Int $expect
+     * @expectedException \Bowling\Score\UnprocessableThrowException
+     * @depends testAddThrowResultIsCallable
+     */
+    public function testOnlyIntThrowsAreAccepted($throw)
+    {
+        $frame = $this->getFrameSubject();
+        $frame->addThrowResult($throw);
     }
 
     /**

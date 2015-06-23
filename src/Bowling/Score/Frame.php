@@ -5,7 +5,7 @@
 
 namespace Bowling\Score;
 
-class Frame
+class Frame implements FrameInterface
 {
     /**
      * @var Int[] $throws collects the knocked pins threw in this frame
@@ -13,7 +13,7 @@ class Frame
     private $throws = [];
 
     /**
-     * @var Int[] $throws collects the knocked pins threw in llater frames
+     * @var Int[] $throws collects the knocked pins threw in later frames
      */
     private $laterThrows = [];
 

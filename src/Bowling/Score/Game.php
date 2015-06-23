@@ -50,6 +50,27 @@ class Game
     }
 
     /**
+     * @param number $frameNumber
+     * @return int|null
+     */
+    public function getScoreByFrameNumber($frameNumber)
+    {
+        $score = null;
+        for ($i=1;$i<=$frameNumber;$i++) {
+
+            $frame = $this->getFrame($i);
+
+            // Just one uncountable frame means, no score for requested frame yet
+            if ($frame->getScore()===null) {
+                return null;
+            }
+
+            $score += $frame->getScore();
+        }
+        return $score;
+    }
+
+    /**
      * @param int $frameNumber
      * @return Frame
      */

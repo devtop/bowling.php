@@ -12,10 +12,10 @@ class GameFactory
      */
     static public function create()
     {
-        $frames = [];
-        for ($i=0;$i<10;$i++) {
-            $frames[] = new Frame();
+        $frameCollection = new FrameCollection();
+        for ($i=1;$i<=Game::FRAMES;$i++) {
+            $frameCollection->setFrame(new Frame(), $i);
         }
-        return new Game($frames);
+        return new Game($frameCollection);
     }
 }

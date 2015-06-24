@@ -8,7 +8,7 @@ namespace Bowling\Score;
 class Game
 {
     /**
-     * @var Frame[]
+     * @var FrameCollection
      */
     private $frames;
 
@@ -20,12 +20,11 @@ class Game
     const FRAMES = 10;
 
     /**
-     * @param Frame[] $firstFrames
+     * @param FrameCollection $firstFrames
      */
-    public function __construct(array $firstFrames)
+    public function __construct(FrameCollection $frames)
     {
-        $this->frames = $firstFrames;
-
+        $this->frames = $frames;
     }
 
     /**
@@ -33,7 +32,7 @@ class Game
      */
     public function addThrow($knockedPins)
     {
-        $activeFrame = $this->getFrame($this->activeFrameNumber);
+        $activeFrame = $this->frames->getframe($this->activeFrameNumber);
         $activeFrame->addThrowResult($knockedPins);
 
         if ($activeFrame->isFinished()) {
@@ -56,9 +55,9 @@ class Game
     public function getScoreByFrameNumber($frameNumber)
     {
         $score = null;
-        for ($i=1;$i<=$frameNumber;$i++) {
+        for($i=1; $i<=$frameNumber; $i++) {
 
-            $frame = $this->getFrame($i);
+            $frame = $this->frames->getframe($i);
 
             // Just one uncountable frame means, no score for requested frame yet
             if ($frame->getScore()===null) {
@@ -68,14 +67,5 @@ class Game
             $score += $frame->getScore();
         }
         return $score;
-    }
-
-    /**
-     * @param int $frameNumber
-     * @return Frame
-     */
-    private function getFrame($frameNumber)
-    {
-        return $this->frames[$frameNumber - 1];
     }
 }

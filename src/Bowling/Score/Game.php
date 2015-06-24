@@ -7,24 +7,37 @@ namespace Bowling\Score;
 
 class Game
 {
-    /**
-     * @var FrameCollection
-     */
+    /** @var FrameCollection */
     private $frames;
 
-    /**
-     * @var int
-     */
-    private $activeFrameNumber = 1;
+    /** @var FrameThrowHandler */
+    private $frameThrowHandler;
 
     const FRAMES = 10;
 
     /**
      * @param FrameCollection $firstFrames
      */
-    public function __construct(FrameCollection $frames)
+    public function __construct(FrameCollection $frames, FrameThrowHandler $frameThrowHandler)
     {
         $this->frames = $frames;
+        $this->frameThrowHandler = $frameThrowHandler;
+    }
+
+    /**
+     * @return FrameThrowHandler
+     */
+    public function getFrameThrowHandler()
+    {
+        return $this->frameThrowHandler;
+    }
+
+    /**
+     * @return FrameCollection
+     */
+    public function getFrames()
+    {
+        return $this->frames;
     }
 
     /**
@@ -32,20 +45,7 @@ class Game
      */
     public function addThrow($knockedPins)
     {
-        $activeFrame = $this->frames->getframe($this->activeFrameNumber);
-        $activeFrame->addThrowResult($knockedPins);
-
-        if ($activeFrame->isFinished()) {
-            $this->activeFrameNumber++;
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function getActiveFrameNumber()
-    {
-        return $this->activeFrameNumber;
+        $this->frameThrowHandler->addThrow($knockedPins);
     }
 
     /**

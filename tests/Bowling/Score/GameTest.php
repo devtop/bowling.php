@@ -26,26 +26,6 @@ class GameTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Bowling\Score\Game::getActiveFrameNumber
-     */
-    public function testActiveFrameStartsByOne()
-    {
-        $game = $this->getGameSubject();
-        $this->assertSame(1, $game->getActiveFrameNumber());
-    }
-
-    /**
-     * @covers \Bowling\Score\Game::getActiveFrameNumber
-     */
-    public function testTwoThrowsIncreasesActiveFrame()
-    {
-        $game = $this->getGameSubject();
-        $game->addThrow(1);
-        $game->addThrow(1);
-        $this->assertGreaterThan(1, $game->getActiveFrameNumber());
-    }
-
-    /**
      * @covers \Bowling\Score\Game::getScoreByFrameNumber
      */
     public function testGetScoreStartsByNull()
@@ -55,7 +35,6 @@ class GameTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @depends testTwoThrowsIncreasesActiveFrame
      * @covers \Bowling\Score\Game::getScoreByFrameNumber
      */
     public function testThrowAddsScoreToFirstFrame()
@@ -136,6 +115,25 @@ class GameTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($game->getScoreByFrameNumber(1));
         $game->addThrow(0);
         $this->assertNull($game->getScoreByFrameNumber(1));
+    }
+
+    /**
+     * @covers \Bowling\Score\Game::getFrames
+     */
+    public function testCanGetFrames()
+    {
+        $game = $this->getGameSubject();
+        $this->assertInstanceOf('\Bowling\Score\FrameCollection', $game->getFrames());
+    }
+
+    /**
+     * @covers \Bowling\Score\Game::getFrameThrowHandler
+     */
+    public function testCanGetFrameThrowHandler()
+    {
+        $game = $this->getGameSubject();
+        $this->assertInstanceOf('\Bowling\Score\FrameThrowHandler', $game->getFrameThrowHandler());
+
     }
 
     /**

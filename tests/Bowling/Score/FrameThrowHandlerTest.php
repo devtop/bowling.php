@@ -66,6 +66,8 @@ class FrameThrowHandlerTest extends \PHPUnit_Framework_TestCase
      * @param int $expectedActiveFrameNumber
      * @dataProvider dpThrowsAndFrameExpectation
      * @depends testActiveFrameNumberIncreasesAfterThrows
+     * @covers \Bowling\Score\FrameThrowHandler::getActiveFrameNumber
+     * @covers \Bowling\Score\FrameThrowHandler::addThrow
      */
     public function testActiveFrameNumberStepsThroughFrames($throws, $expectedActiveFrameNumber)
     {
@@ -76,24 +78,28 @@ class FrameThrowHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedActiveFrameNumber, $handler->getActiveFrameNumber());
     }
 
+    /**
+     * @depends testActiveFrameNumberStepsThroughFrames
+     * @covers \Bowling\Score\FrameThrowHandler::getActiveFrameNumber
+     * @covers \Bowling\Score\FrameThrowHandler::addThrow
+     */
     public function testHandlerGivesLaterThrowToStrikeFrame()
     {
-        $this->markTestIncomplete();
         $frameCollection = $this->getFrameCollection();
 
         $frameMock = $this->getMockBuilder('\Bowling\Score\Frame')
-                        ->setMethods(array('addThrowResult', 'isFinished'))
+                        ->setMethods(array('addThrowResult', 'isFinished', 'getScore'))
                         ->getMock();
         $frameMock->expects($this->exactly(2))
             ->method('addThrowResult');
         $frameMock->method('isFinished')->willReturn(true);
+        $frameMock->method('getScore')->willReturn(null);
         $frameCollection->setFrame($frameMock, 1);
 
         $handler = new FrameThrowHandler($frameCollection);
 
         $handler->addThrow(Frame::PINS_ON_LANE);
         $handler->addThrow(0);
-
     }
 
     /**
@@ -103,14 +109,6 @@ class FrameThrowHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $frames = $this->getFrameCollection();
         return new FrameThrowHandler($frames);
-    }
-
-    /**
-     * @return Frame|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getFrameStub()
-    {
-        return $this->getMockBuilder('\Bowling\Score\Frame')->getMock();
     }
 
     /**

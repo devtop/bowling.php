@@ -16,6 +16,8 @@ class GameFactory
         for ($i=1;$i<=Game::FRAMES;$i++) {
             $frameCollection->setFrame(new Frame(), $i);
         }
-        return new Game($frameCollection);
+
+        $frameThrowHandler = new FrameThrowHandler($frameCollection);
+        return new Game($frameCollection, $frameThrowHandler);
     }
 }

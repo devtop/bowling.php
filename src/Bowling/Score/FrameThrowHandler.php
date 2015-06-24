@@ -57,7 +57,7 @@ class FrameThrowHandler
     private function increaseActiveFrame()
     {
         $activeFrame = $this->frames->getframe($this->activeFrameNumber);
-        if ($activeFrame->isFinished()) {
+        if ($activeFrame->isFinished() && ($this->activeFrameNumber<Game::FRAMES)) {
             $this->activeFrameNumber++;
         }
     }

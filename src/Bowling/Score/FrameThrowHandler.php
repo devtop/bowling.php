@@ -9,21 +9,39 @@ namespace Bowling\Score;
 
 class FrameThrowHandler
 {
+    /** @var FrameCollection */
+    private $frames;
+
+    /** @var int */
+    private $activeFrameNumber = 1;
+
+    /** @var array */
+    private $throwListenFrames = [];
+
+    public function __construct(FrameCollection $frames)
+    {
+        $this->frames = $frames;
+        $this->throwListenFrames[] = $frames->getframe($this->activeFrameNumber);
+    }
+
     /**
-     * @var array
+     * @param int $knockedPins
      */
-    private $frames = [];
-
-    public function addFrame(FrameInterface $frame)
+    public function addThrow($knockedPins)
     {
-        // end((array_keys($myarr)))
+        $activeFrame = $this->frames->getframe($this->activeFrameNumber);
+        $activeFrame->addThrowResult($knockedPins);
 
+        if ($activeFrame->isFinished()) {
+            $this->activeFrameNumber++;
+        }
     }
 
-
-    public function getFrame()
+    /**
+     * @return int
+     */
+    public function getActiveFrameNumber()
     {
-
+        return $this->activeFrameNumber;
     }
-
 }

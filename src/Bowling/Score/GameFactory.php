@@ -13,11 +13,28 @@ class GameFactory
     static public function create()
     {
         $frameCollection = new FrameCollection();
-        for ($i=1;$i<=Game::FRAMES;$i++) {
-            $frameCollection->setFrame(new Frame(), $i);
-        }
+        self::createFrames($frameCollection);
+        self::createFinalFrame($frameCollection);
 
         $frameThrowHandler = new FrameThrowHandler($frameCollection);
         return new Game($frameCollection, $frameThrowHandler);
+    }
+
+    /**
+     * @param $frameCollection
+     */
+    private static function createFrames($frameCollection)
+    {
+        for ($i = 1; $i < Game::FRAMES; $i++) {
+            $frameCollection->setFrame(new Frame(), $i);
+        }
+    }
+
+    /**
+     * @param $frameCollection
+     */
+    private static function createFinalFrame($frameCollection)
+    {
+        $frameCollection->setFrame(new FinalFrame(), Game::FRAMES);
     }
 }

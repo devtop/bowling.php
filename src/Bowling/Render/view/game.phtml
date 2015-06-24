@@ -1,0 +1,31 @@
+<?php
+/**
+ * Created by Tobias Ranft <coded@ranft.biz> 2015
+ */
+
+/* @var \Bowling\Score\Game $game */
+$game = $this->game;
+
+echo "\n";
+for ($i=1; $i<=9; $i++) {
+    echo "| $i     ";
+}
+echo "| 10        |\n";
+
+echo "+-------+-------+-------+-------+-------+-------+-------+-------+-------+-----------+\n";
+
+$frames = $game->getFrames();
+for ($i=1; $i<=9; $i++) {
+    echo "|   |   ";
+}
+//echo "| █ | ▄ | 5 |\n";
+echo "|   |   |   |\n";
+
+for ($i=1; $i<=9; $i++) {
+    $score = ($game->getScoreByFrameNumber($i)===null) ? '?' : $game->getScoreByFrameNumber($i);
+    echo sprintf("| %4s  ", $score);
+}
+$score = ($game->getScoreByFrameNumber(10)===null) ? '?' : $game->getScoreByFrameNumber(10);
+echo sprintf("|   %4s    |\n", $score);
+
+echo "+-------+-------+-------+-------+-------+-------+-------+-------+-------+-----------+\n\n";

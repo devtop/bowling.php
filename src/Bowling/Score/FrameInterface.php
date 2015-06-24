@@ -8,19 +8,16 @@ namespace Bowling\Score;
 interface FrameInterface
 {
 
-    /**
-     * @param number $knockedPins
-     */
+    /** @param number $knockedPins */
     public function addThrowResult($knockedPins);
 
-    /**
-     * @return number
-     */
+    /**@return number */
     public function getScore();
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isFinished();
+
+    /** @param number $number */
+    public function getThrowResult($number);
 
 }

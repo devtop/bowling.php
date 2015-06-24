@@ -16,10 +16,45 @@ echo "+-------+-------+-------+-------+-------+-------+-------+-------+-------+-
 
 $frames = $game->getFrames();
 for ($i=1; $i<=9; $i++) {
-    echo "|   |   ";
+    $frame = $frames->getframe($i);
+    if ($frame->getThrowResult(0)===10) {
+        $throw0 = "█";
+        $throw1 = " ";
+    }
+    elseif ($frame->getThrowResult(0)===null) {
+        $throw0 = " ";
+        $throw1 = " ";
+    }
+    elseif ($frame->getThrowResult(1)===null) {
+        $throw0 = $frame->getThrowResult(0);
+        $throw1 = " ";
+    }
+    elseif (($frame->getThrowResult(0)+$frame->getThrowResult(1)===10)) {
+        $throw0 = $frame->getThrowResult(0);
+        $throw1 = "▄";
+    }
+    else {
+        $throw0 = $frame->getThrowResult(0);
+        $throw1 = $frame->getThrowResult(1);
+    }
+    printf("| %s | %s ", $throw0, $throw1);
 }
-//echo "| █ | ▄ | 5 |\n";
-echo "|   |   |   |\n";
+for ($i=0; $i<=2; $i++) {
+    if ($frame->getThrowResult($i)===10) {
+        ${"throw$i"} = "█";
+    }
+    elseif ($frame->getThrowResult($i)===null) {
+        ${"throw$i"} = " ";
+    }
+    else {
+        ${"throw$i"} = $frame->getThrowResult($i);
+    }
+}
+if (($frame->getThrowResult(0)+$frame->getThrowResult(1)===10)) {
+    $throw1 = "▄";
+}
+
+printf("| %s | %s | %s |\n", $throw0, $throw1, $throw2);
 
 for ($i=1; $i<=9; $i++) {
     $score = ($game->getScoreByFrameNumber($i)===null) ? '?' : $game->getScoreByFrameNumber($i);

@@ -46,6 +46,15 @@ class Frame implements FrameInterface
     }
 
     /**
+     * @param number $number
+     * @return null|number
+     */
+    public function getThrowResult($number)
+    {
+        return (isset($this->throws[$number])) ? $this->throws[$number] : null;
+    }
+
+    /**
      * @return null|int
      */
     public function getScore()

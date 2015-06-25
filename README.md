@@ -42,3 +42,5 @@ $ php run.php
 
 ## Open Tasks
 * reduce Frame functionality, maybe by moving some code into a ThrowStack class
+* clean up the render part
+* build a web application

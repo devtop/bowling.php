@@ -40,6 +40,7 @@ for ($i=1; $i<=9; $i++) {
     printf("| %s | %s ", $throw0, $throw1);
 }
 for ($i=0; $i<=2; $i++) {
+    $frame = $frames->getframe(10);
     if ($frame->getThrowResult($i)===10) {
         ${"throw$i"} = "█";
     }

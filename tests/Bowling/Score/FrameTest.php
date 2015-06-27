@@ -193,6 +193,46 @@ class FrameTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @depends testAddThrowResultIsCallable
+     */
+    public function testGetThrowDefaultNull()
+    {
+        $frame = $this->getFrameSubject();
+        for ($i=0; $i<Frame::MAX_THROWS_PER_FRAME; $i++) {
+            $this->assertNull($frame->getThrowResult($i));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function dpThrowCases()
+    {
+        return [
+            [[0, 0]],
+            [[Frame::PINS_ON_LANE]],
+            [[0, Frame::PINS_ON_LANE]],
+            [[5, 5]],
+        ];
+    }
+
+    /**
+     * @depends testGetThrowDefaultNull
+     * @param array $throws
+     * @dataProvider dpThrowCases
+     */
+    public function testCanGetAddThrow(array $throws)
+    {
+        $frame = $this->getFrameSubject();
+        foreach ($throws as $throw) {
+            $frame->addThrowResult($throw);
+        }
+        foreach ($throws as $nr => $throw) {
+            $this->assertSame($throw, $frame->getThrowResult($nr));
+        }
+    }
+
+    /**
      * @return array
      */
     public function dpTooHighThrows()
